@@ -21,8 +21,8 @@ export function calculateDueDate(submit: Date, worksHours: number): Date {
     if(worksHours < 0) 
         throw new Error("the workHours must be a positive integer");
 
-    if(!isOfficeDay(submit)){
-        throw new Error("the submit date must be in a working day (Monday to Friday)");
+    if(!isOfficeDay(submit) || !isOfficeHour(submit)){
+        throw new Error("the submit date must be in a working day/hour (Monday to Friday[09:00 to 17:00])");
     }
 
     let remainingMinutes = Math.round(worksHours * 60);
@@ -36,11 +36,11 @@ export function calculateDueDate(submit: Date, worksHours: number): Date {
          currentDate = toNextOfficeDay(currentDate);
         
        }
-       const canWWork = Math.min(minutesRemainingInDay(currentDate), remainingMinutes);
+       const canWork = Math.min(minutesRemainingInDay(currentDate), remainingMinutes);
 
-       if(canWWork > 0){
-         currentDate.setTime(currentDate.getTime() + canWWork * 60000);
-         remainingMinutes-=canWWork;
+       if(canWork > 0){
+         currentDate.setTime(currentDate.getTime() + canWork * 60000);
+         remainingMinutes-=canWork;
        }
 
        if(remainingMinutes > 0 && currentDate.getHours() === END_HOUR){
